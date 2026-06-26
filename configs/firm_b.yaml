@@ -1,0 +1,160 @@
+profile:
+  name: firm_b
+  version: 1.0.0
+  description: "Meridian Fixed Income Fund - Firm B Methodology"
+
+graph:
+  required_status: APPROVED
+
+computation:
+  rounding_mode: half_up
+  percentage_precision: 1
+  currency: SGD
+
+classification:
+  allocation:
+    singapore_government_securities: Singapore Government Securities
+    mas_bills: MAS Bills
+    investment_grade_corporate_bonds: Investment Grade Corporate Bonds
+    high_yield_bonds: High Yield Bonds
+    foreign_currency_bonds: Foreign Currency Bonds
+    structured_credit: Structured Credit
+    cash_and_cash_equivalents: Cash & Cash Equivalents
+
+  non_investment_grade_asset_classes:
+    - High Yield Bonds
+    - Structured Credit
+
+  liquidity_asset_classes:
+    - Singapore Government Securities
+    - MAS Bills
+    - Cash & Cash Equivalents
+
+  gre_issuer_types:
+    - Government Related Entity
+    
+  #
+  # Difference #1
+  #
+  fallen_angels:
+    treatment: investment_grade
+    watchlist_period_days: 180
+
+aggregation:
+  non_ig_method:
+    source: asset_class
+
+  #
+  # Difference #2
+  #
+  gre_concentration_method:
+    source: parent_issuer
+
+  issuer_concentration_method:
+    source: issuer
+
+limits:
+  asset_allocation:
+    singapore_government_securities:
+      min: 20
+      max: 60
+
+    mas_bills:
+      min: 0
+      max: 40
+
+    investment_grade_corporate_bonds:
+      min: 10
+      max: 50
+
+    high_yield_bonds:
+      min: 0
+      max: 15
+
+    foreign_currency_bonds:
+      min: 0
+      max: 20
+
+    structured_credit:
+      min: 0
+      max: 10
+
+    cash_and_cash_equivalents:
+      min: 5
+      max: 25
+
+  aggregate_non_ig_exposure:
+    max: 20
+
+  single_issuer_concentration:
+    max: 8
+    exclude:
+      - Singapore Government
+
+  gre_concentration:
+    max: 12
+
+  liquidity_ratio:
+    min: 25
+
+  duration:
+    min: 2.0
+    max: 6.5
+
+  dv01:
+    max: 85000
+
+evaluation:
+  breach_threshold:
+    operator: inclusive
+
+  status_values:
+    pass: OK
+    fail: BREACH
+
+reporting:
+  #
+  # Difference #3
+  #
+  utilization_format:
+    type: basis_points
+    precision: 0
+
+  include_graph_path: true
+  include_citation: true
+  include_limit: true
+  include_status: true
+
+traceability:
+  required:
+    - graph_path
+    - source_document
+    - page
+    - chunk_id
+
+  fail_if_missing: true
+
+reconciliation:
+  enabled: true
+
+  tolerance:
+    percentage: 0.01
+    duration: 0.01
+    dv01: 1
+
+audit:
+  emit_events:
+    - CONFIG_PROFILE_LOADED
+    - FIGURE_COMPUTED
+    - BREACH_DETECTED
+    - TRACEABILITY_VALIDATED
+    - RECONCILIATION_COMPLETED
+
+figure_contract:
+  required_fields:
+    - figure
+    - value
+    - status
+    - limit
+    - graph_path
+    - citation

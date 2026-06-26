@@ -1,0 +1,44 @@
+services:
+  neo4j:
+    image: neo4j:5.26.27-community-trixie
+    container_name: fund-compliance-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/D3WzzQdGa8UhEaqM2abozC5SrjO8KJZN
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 512m
+    volumes:
+      - neo4j_data:/data
+      - ./neo4j:/import
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:7474"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks:
+      - fund-compliance-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fund-compliance-engine
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    env_file: .env
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: uv run python main.py
+    networks:
+      - fund-compliance-network
+volumes:
+  neo4j_data:
+
+networks: 
+  fund-compliance-network: 
+    driver: bridge
