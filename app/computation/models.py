@@ -1,6 +1,5 @@
 from __future__ import annotations
-
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 
 
@@ -45,3 +44,15 @@ class FigureResult:
     graph_path: str | None = None
 
     citation: str | None = None
+
+@dataclass(slots=True)
+class ComputationResult:
+    """
+    Aggregated computation output produced by the
+    ComputationEngine.
+    """
+
+    figures: list[FigureResult] = field(
+        default_factory=list
+    )
+
