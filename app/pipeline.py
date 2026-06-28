@@ -7,7 +7,19 @@ from app.narrative.models import NarrativeResult
 
 class Pipeline:
     """
-    Complete application pipeline.
+        End-to-end application pipeline.
+
+        Configuration
+              ↓
+          Holdings
+              ↓
+         Computation
+              ↓
+       Reconciliation
+              ↓
+       Narrative (LLM)
+              ↓
+         PDF Report
     """
 
 
@@ -78,14 +90,28 @@ class Pipeline:
         #
         # Markdown Report
         #
+        # report_path = (
+        #     self._bootstrap.report_writer.write_markdown(
+        #         result=narrative,
+        #         output_path=Path(
+        #             "output/compliance_report.pdf"
+        #         ),
+        #     )
+        # )
+
+
         report_path = (
-            self._bootstrap.report_writer.write_markdown(
-                result=narrative,
+            self._bootstrap.report_writer.pdf(
+                fund_name=configuration["profile"]["description"],
+                narrative=narrative,
+                computation=computation,
+                reconciliation=reconciliation,
                 output_path=Path(
-                    "output/compliance_report.pdf"
+                        "output/compliance_report.pdf"
                 ),
             )
         )
+
 
         return (
             computation,
