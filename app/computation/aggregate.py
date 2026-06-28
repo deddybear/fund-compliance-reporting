@@ -61,6 +61,7 @@ class AggregateCalculator(BaseCalculator):
 
         status = self._evaluator.evaluate(
             value=percentage,
+            status_values=configuration["evaluation"]["status_values"],
             minimum=minimum,
             maximum=maximum,
         )

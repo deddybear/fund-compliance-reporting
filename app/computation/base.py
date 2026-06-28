@@ -76,6 +76,8 @@ class BaseCalculator:
         Build a standardized FigureResult.
         """
 
+        print(value);
+
         return FigureResult(
             section=section,
             figure=figure,

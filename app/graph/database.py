@@ -1,6 +1,6 @@
 from neo4j import GraphDatabase
 from neo4j import Driver
-from app.settings import Settings
+from app.configuration.settings import Settings
 
 
 class Neo4jDatabase:
@@ -12,7 +12,7 @@ class Neo4jDatabase:
 
     def connect(self) -> None:
         """Create Neo4j driver."""
-
+        
         self._driver = GraphDatabase.driver(
             uri=self._settings.neo4j_uri,
             auth=(
@@ -30,6 +30,14 @@ class Neo4jDatabase:
         self._driver.verify_connectivity()
 
     def driver(self) -> Driver:
+        """Return active driver."""
+
+        if self._driver is None:
+            raise RuntimeError("Neo4j driver has not been initialized.")
+
+        return self._driver
+    
+    def get_driver(self) -> Driver:
         """Return active driver."""
 
         if self._driver is None:

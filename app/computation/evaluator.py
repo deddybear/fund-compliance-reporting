@@ -10,35 +10,51 @@ class LimitEvaluator:
     Evaluate a computed value against configured limits.
     """
 
-    def __init__(
-        self,
-        evaluation_config: dict[str, Any],
-    ) -> None:
-        self._status = evaluation_config["status_values"]
-
     def evaluate(
         self,
         value: Decimal,
+        status_values: dict[str, str],
         minimum: Decimal | None = None,
         maximum: Decimal | None = None,
     ) -> str:
         """
         Evaluate a value against optional minimum and/or maximum limits.
+
+        Args:
+            value:
+                Computed value.
+
+            status_values:
+                Status values defined in configuration.
+
+            minimum:
+                Optional minimum limit.
+
+            maximum:
+                Optional maximum limit.
+
+        Returns:
+            Evaluation status.
         """
 
         if minimum is not None:
             if value < minimum:
-                return self._status["fail"]
+                return status_values["fail"]
 
             if value == minimum:
-                return self._status["warning"]
+                return status_values.get(
+                    "warning",
+                    status_values["pass"],
+                )
 
         if maximum is not None:
             if value > maximum:
-                return self._status["fail"]
+                return status_values["fail"]
 
             if value == maximum:
-                return self._status["warning"]
+                return status_values.get(
+                    "warning",
+                    status_values["pass"],
+                )
 
-        return self._status["pass"]
-
+        return status_values["pass"]

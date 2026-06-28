@@ -61,6 +61,7 @@ class LiquidityCalculator(BaseCalculator):
 
         status = self._evaluator.evaluate(
             value=liquidity_ratio,
+            status_values=configuration["evaluation"]["status_values"],
             minimum=minimum,
             maximum=maximum,
         )

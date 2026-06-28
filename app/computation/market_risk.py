@@ -66,6 +66,7 @@ class MarketRiskCalculator(BaseCalculator):
 
         status = self._evaluator.evaluate(
             value=duration,
+            status_values=configuration["evaluation"]["status_values"],
             minimum=minimum,
             maximum=maximum,
         )
@@ -101,6 +102,7 @@ class MarketRiskCalculator(BaseCalculator):
 
         status = self._evaluator.evaluate(
             value=dv01,
+            status_values=configuration["evaluation"]["status_values"],
             minimum=minimum,
             maximum=maximum,
         )

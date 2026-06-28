@@ -63,6 +63,7 @@ class ConcentrationCalculator(BaseCalculator):
             if holding.issuer_name not in excluded
         ]
 
+
         grouped = self.group_market_value_by_issuer(
             filtered_holdings,
             key_selector=lambda h: h.issuer_name,
@@ -87,6 +88,7 @@ class ConcentrationCalculator(BaseCalculator):
 
         status = self._evaluator.evaluate(
             value=percentage,
+            status_values=configuration["evaluation"]["status_values"],
             minimum=minimum,
             maximum=maximum,
         )
@@ -147,6 +149,7 @@ class ConcentrationCalculator(BaseCalculator):
 
         status = self._evaluator.evaluate(
             value=percentage,
+            status_values=configuration["evaluation"]["status_values"],
             minimum=minimum,
             maximum=maximum,
         )

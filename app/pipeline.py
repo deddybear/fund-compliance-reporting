@@ -1,57 +1,59 @@
 from pathlib import Path
-from app.graph.database import Neo4jDatabase
-from app.settings import load_settings
-from app.graph.cypher_runner import CypherRunner
-from app.graph.bootstrap import GraphBootstrap
-from app.config.loader import ConfigurationLoader
-from app.holdings.loader import HoldingsLoader
+from decimal import Decimal
+from app.bootstrap import Bootstrap
+from app.computation.models import ComputationResult
+from app.reconciliation.models import ReconciliationResult
 
 class Pipeline:
+    """
+    Complete application pipeline.
+    """
 
-    def run(self) -> None:
-        print("[BOOT] Initializing pipeline...")
 
-        settings = load_settings()
+    def __init__(
+        self,
+        bootstrap: Bootstrap,
+    ) -> None:
+        self._bootstrap = bootstrap
 
-        database = Neo4jDatabase(settings)
+    def run(
+        self,
+        configuration_path: Path,
+        holdings_path: Path,
+        answer_key_path: Path,
+    ) -> tuple[
+        ComputationResult,
+        ReconciliationResult,
+    ]:
 
-        print("[GRAPH] Connecting to Neo4j...")
-
-        database.connect()
-
-        database.verify()
-
-        print("[GRAPH] Connected successfully.")
-
-        runner = CypherRunner(database.driver())
-
-        bootstrap = GraphBootstrap(
-            runner=runner,
-            scripts_directory=Path("neo4j")
+        configuration = (
+            self._bootstrap.configuration_loader.load(
+                configuration_path,
+            )
         )
 
-        bootstrap.initialize()
-        
-        database.close()
-
-        print("[CONFIG] Initzialation Loader")
-
-        loader = ConfigurationLoader()
-
-        config = loader.load(
-            Path("configs/firm_a.yaml")
+        holdings = (
+            self._bootstrap.holdings_loader.load(
+                holdings_path,
+            )
         )
 
-        print(
-            f"[CONFIG] Loaded configuration: {config['profile']['name']}"
+        computation = (
+            self._bootstrap.computation_engine.compute(
+                holdings=holdings,
+                configuration=configuration,
+            )
         )
 
-        holdings_loader = HoldingsLoader()
-
-        holdings = holdings_loader.load(
-            Path("sample_docs/sample_holdings.csv")
+        reconciliation = (
+            self._bootstrap.reconciliation_engine.reconcile(
+                answer_key=answer_key_path,
+                computed_figures=computation.figures,
+                tolerance=Decimal("0.01"),
+            )
         )
-        
-        print(
-            f"[HOLDINGS] Loaded {len(holdings)} instruments."
+
+        return (
+            computation,
+            reconciliation,
         )
