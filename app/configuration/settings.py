@@ -1,10 +1,11 @@
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
+from dotenv import load_dotenv
 
 
 @dataclass(frozen=True)
 class Settings:
-    """Application settings."""
+    """Application settings loaded from environment variables."""
 
     neo4j_uri: str
     neo4j_username: str
@@ -13,7 +14,8 @@ class Settings:
 
 def load_settings() -> Settings:
     """Load application settings from environment variables."""
-
+    load_dotenv()
+    
     return Settings(
         neo4j_uri=os.getenv("NEO4J_URI", "bolt://neo4j:7687"),
         neo4j_username=os.getenv("NEO4J_USERNAME", "neo4j"),
