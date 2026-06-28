@@ -30,7 +30,7 @@ def main() -> None:
             "data/firm_A_answer_key.xlsx"
         )
 
-        computation, reconciliation = pipeline.run( 
+        computation, reconciliation, narrative, report_path = pipeline.run( 
             configuration_path=configuration_path, 
             holdings_path=holdings_path, 
             answer_key_path=answer_key_path, 
@@ -76,10 +76,36 @@ def main() -> None:
 
         print()
 
-        if reconciliation.passed:
-            print("✅ Reconciliation PASSED")
-        else:
-            print("❌ Reconciliation FAILED")
+        #
+        # Narrative
+        #
+        print()
+        print("=" * 80)
+        print("Narrative")
+        print("=" * 80)
+
+        # print(narrative.content)
+
+        #
+        # Report Information
+        #
+        print()
+        print("=" * 80)
+        print("Report")
+        print("=" * 80)
+
+        print(f"Saved To : {report_path}")
+        print(f"Model    : {narrative.model}")
+
+        if narrative.prompt_tokens is not None:
+            print(f"Prompt Tokens     : {narrative.prompt_tokens}")
+
+        if narrative.completion_tokens is not None:
+            print(f"Completion Tokens : {narrative.completion_tokens}")
+
+        if narrative.total_tokens is not None:
+            print(f"Total Tokens      : {narrative.total_tokens}")
+
 
     except Exception as e :
         # Get the current exception traceback
@@ -91,6 +117,12 @@ def main() -> None:
         file_name = last_frame.filename
         line_no = last_frame.lineno
         error_message = str(e)
+
+        print()
+        print("=" * 80)
+        print("APPLICATION ERROR")
+        print("=" * 80)
+
     
         print(f"Error Message: {error_message}")
         print(f"File Name: {file_name}")

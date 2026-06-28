@@ -14,6 +14,10 @@ from app.holdings.loader import HoldingsLoader
 from app.reconciliation.loader import ReconciliationLoader
 from app.reconciliation.comparator import Comparator
 from app.reconciliation.engine import ReconciliationEngine
+from app.narrative.builder import NarrativeBuilder
+from app.narrative.prompt import PromptBuilder
+from app.narrative.report import ReportWriter
+from app.narrative.openai_generator import OpenAINarrativeGenerator
 
 
 
@@ -100,6 +104,18 @@ class Bootstrap:
             loader=self.reconciliation_loader,
             comparator=self.reconciliation_comparator,
         )
+
+        self.prompt_builder = PromptBuilder()
+        
+        self.narrative_builder = NarrativeBuilder()
+        
+        self.narrative_generator = OpenAINarrativeGenerator(
+            api_key=self.settings.openai_api_key,
+            model=self.settings.openai_model,
+            prompt_builder=self.prompt_builder,
+        )
+        
+        self.report_writer = ReportWriter()
 
 
     def shutdown(self) -> None:

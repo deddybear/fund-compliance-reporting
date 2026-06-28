@@ -10,6 +10,8 @@ class Settings:
     neo4j_uri: str
     neo4j_username: str
     neo4j_password: str
+    openai_api_key: str
+    openai_model: str
 
 
 def load_settings() -> Settings:
@@ -20,4 +22,6 @@ def load_settings() -> Settings:
         neo4j_uri=os.getenv("NEO4J_URI", "bolt://neo4j:7687"),
         neo4j_username=os.getenv("NEO4J_USERNAME", "neo4j"),
         neo4j_password=os.getenv("NEO4J_PASSWORD", "password"),
+        openai_api_key=os.getenv("OPENAI_API_KEY", ""),
+        openai_model=os.getenv("OPENAI_API_MODEL", "")
     )

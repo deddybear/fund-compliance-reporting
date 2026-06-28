@@ -1,0 +1,39 @@
+# Meridian Fixed Income Fund - Firm A Methodology  
+## Portfolio Compliance Report
+
+### Scope
+This report summarizes the fund’s compliance position based solely on the supplied computed figures and stated policy limits.
+
+### Allocation Review
+The portfolio is compliant across most allocation categories.
+
+- **Singapore government securities** are at **35.00%**, within the permitted **20–60%** range.
+- **MAS bills** are at **8.00%**, within the permitted **0–40%** range.
+- **Investment grade corporate bonds** are at **33.00%**, within the permitted **10–50%** range.
+- **High yield bonds** are at **9.00%**, within the permitted **0–15%** range.
+- **Foreign currency bonds** are at **5.00%**, within the permitted **0–20%** range.
+- **Structured credit** is at **6.00%**, within the permitted **0–10%** range.
+
+One allocation metric is non-compliant:
+
+- **Cash and cash equivalents** are at **4.00%**, which is below the minimum required **5–25%** range. This is a **breach** and requires attention.
+
+### Aggregate Exposure
+- **Aggregate Non-IG Exposure** is **15.00%**, which is within the limit of **≤ 20%**. This metric is compliant.
+
+### Concentration Review
+- **Single issuer concentration** is **8.00%**, which is **at the limit** of **≤ 8%**. While not a breach, this is a threshold-level position and should be monitored closely.
+- **GRE concentration** is **7.00%**, within the limit of **≤ 12%**. This metric is compliant.
+
+### Liquidity Review
+- **Liquidity ratio** is **47.00%**, above the minimum requirement of **≥ 25%**. Liquidity is compliant.
+
+### Market Risk Review
+- **Portfolio modified duration** is **3.879**, within the permitted range of **2.0–6.5%**. This metric is compliant.
+- **Portfolio DV01** is **38,790.00000**, within the limit of **≤ 85,000%**. This metric is compliant.
+
+### Compliance Assessment
+The portfolio is broadly compliant with the stated methodology, with one clear breach and one metric at its maximum permitted level. The only non-compliant item is the **cash and cash equivalents allocation**, which is below the required minimum. The **single issuer concentration** is compliant but sits exactly at the limit, indicating limited headroom.
+
+### Executive Summary
+Meridian Fixed Income Fund is **mostly compliant** under Firm A Methodology. All allocation, aggregate, liquidity, and market risk metrics are within limits except for **cash and cash equivalents**, which are **below the minimum threshold** and therefore in breach. In addition, **single issuer concentration** is **at limit**, so ongoing monitoring is recommended.

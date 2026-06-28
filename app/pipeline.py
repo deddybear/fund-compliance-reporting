@@ -3,6 +3,7 @@ from decimal import Decimal
 from app.bootstrap import Bootstrap
 from app.computation.models import ComputationResult
 from app.reconciliation.models import ReconciliationResult
+from app.narrative.models import NarrativeResult
 
 class Pipeline:
     """
@@ -24,6 +25,8 @@ class Pipeline:
     ) -> tuple[
         ComputationResult,
         ReconciliationResult,
+        NarrativeResult,
+        Path,
     ]:
 
         configuration = (
@@ -53,7 +56,40 @@ class Pipeline:
             )
         )
 
+        #
+        # Narrative Context
+        #
+        context = (
+            self._bootstrap.narrative_builder.build(
+                fund_name=configuration["profile"]["description"],
+                figures=computation.figures,
+            )
+        )
+
+        #
+        # AI Narrative
+        #
+        narrative = (
+            self._bootstrap.narrative_generator.generate(
+                context=context,
+            )
+        )
+
+        #
+        # Markdown Report
+        #
+        report_path = (
+            self._bootstrap.report_writer.write_markdown(
+                result=narrative,
+                output_path=Path(
+                    "output/compliance_report.pdf"
+                ),
+            )
+        )
+
         return (
             computation,
             reconciliation,
+            narrative,
+            report_path,
         )
