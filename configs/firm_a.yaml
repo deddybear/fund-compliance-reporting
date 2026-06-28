@@ -31,7 +31,7 @@ classification:
     - Cash & Cash Equivalents
 
   gre_issuer_types:
-    - Government Related Entity
+    - GRE
 
 aggregation:
   non_ig_method:

@@ -31,7 +31,7 @@ classification:
     - Cash & Cash Equivalents
 
   gre_issuer_types:
-    - Government Related Entity
+    - GRE
     
   #
   # Difference #1
@@ -110,6 +110,7 @@ evaluation:
 
   status_values:
     pass: OK
+    warning: AT LIMIT
     fail: BREACH
 
 reporting:
