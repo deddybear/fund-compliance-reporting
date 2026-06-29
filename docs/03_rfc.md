@@ -441,7 +441,7 @@ Audit records MUST NOT be modified or deleted.
 
 Corrections SHALL be recorded as new events.
 
-The implementation SHALL use PostgreSQL.
+The implementation SHALL use SQLite.
 
 ---
 

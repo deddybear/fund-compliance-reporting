@@ -332,7 +332,7 @@ Human approval checkpoint.
 Technology:
 
 ```text
-PostgreSQL
+SQLite
 ```
 
 ### Responsibilities
@@ -452,7 +452,7 @@ The solution is deployed using Docker Compose.
                         v
 
                  +-------------+
-                 | PostgreSQL  |
+                 | SQLite  |
                  | Audit Store |
                  +-------------+
 
