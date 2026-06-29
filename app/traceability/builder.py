@@ -1,21 +1,24 @@
 from __future__ import annotations
 
 from app.computation.models import FigureResult
-from app.traceability.registry import TRACEABILITY_REGISTRY
+from app.traceability.service import TraceabilityService
 
 
 class TraceabilityBuilder:
     """
     Enrich computed figures with traceability metadata.
 
-    This builder attaches:
-
-        - graph_path
-        - citation
-
-    to every computed figure using the
-    TRACEABILITY_REGISTRY.
+    This builder is intentionally unaware of where the
+    traceability data comes from. It delegates lookup to
+    TraceabilityService.
     """
+
+    def __init__(
+        self,
+        service: TraceabilityService,
+    ) -> None:
+
+        self._service = service
 
     def enrich(
         self,
@@ -26,10 +29,8 @@ class TraceabilityBuilder:
 
         for figure in figures:
 
-            traceability = (
-                TRACEABILITY_REGISTRY.get(
-                    figure.figure,
-                )
+            traceability = self._service.get(
+                figure.figure,
             )
 
             #
@@ -55,7 +56,7 @@ class TraceabilityBuilder:
                     graph_path=traceability.graph_path,
                     citation=str(traceability.citation),
                     minimum=figure.minimum,
-                    maximum=figure.maximum
+                    maximum=figure.maximum,
                 )
 
             )
