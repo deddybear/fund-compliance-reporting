@@ -5,10 +5,6 @@ from app.traceability.repository import TraceabilityRepository
 
 
 class TraceabilityService:
-    """
-    Application service responsible for providing traceability
-    metadata to the computation/reporting pipeline.
-    """
 
     def __init__(
         self,
@@ -17,50 +13,27 @@ class TraceabilityService:
 
         self._repository = repository
 
-    def get(
+    def find(
         self,
-        figure: str,
+        metric_id: str,
     ) -> Traceability | None:
-        """
-        Retrieve traceability information for a computed figure.
-        """
 
-        return self._repository.get(
-            figure,
+        return self._repository.find(
+            metric_id,
         )
 
     def require(
         self,
-        figure: str,
+        metric_id: str,
     ) -> Traceability:
-        """
-        Retrieve traceability information.
 
-        Raises
-        ------
-        KeyError
-            If traceability metadata is missing.
-        """
-
-        traceability = self._repository.get(
-            figure,
+        traceability = self.find(
+            metric_id,
         )
 
         if traceability is None:
             raise KeyError(
-                f"Traceability not found for figure '{figure}'."
+                f"Traceability '{metric_id}' not found."
             )
 
         return traceability
-
-    def exists(
-        self,
-        figure: str,
-    ) -> bool:
-        """
-        Check whether traceability metadata exists.
-        """
-
-        return self._repository.exists(
-            figure,
-        )

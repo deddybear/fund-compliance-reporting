@@ -29,8 +29,8 @@ class TraceabilityBuilder:
 
         for figure in figures:
 
-            traceability = self._service.get(
-                figure.figure,
+            traceability = self._service.find(
+                figure.figure
             )
 
             #

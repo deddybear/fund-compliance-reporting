@@ -12,17 +12,23 @@ from app.narrative.pdf.narrative import NarrativeBuilder
 from app.narrative.pdf.footer import FooterBuilder
 from app.narrative.markdown.builder import write_markdown
 from app.narrative.pdf.utilization import UtilizationCalculator
+from app.graph.image_service import GraphImageService
 
 class ReportWriter:
     """
     Writes generated narrative reports to disk.
     """
 
-    def __init__(self, utilization: UtilizationCalculator,) -> None:
+    def __init__(
+            self, 
+            utilization: UtilizationCalculator,
+            graph_image: GraphImageService,
+        ) -> None:
 
         self.styles = PDFStyles()
 
         self._utilization = utilization
+        self._graph_image = graph_image
 
         self.cover = CoverBuilder(
             self.styles,

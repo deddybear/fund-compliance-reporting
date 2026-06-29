@@ -9,8 +9,17 @@ from app.computation.liquidity import LiquidityCalculator
 from app.computation.market_risk import MarketRiskCalculator
 from app.configuration.loader import ConfigurationLoader
 from app.configuration.settings import load_settings
-from app.graph.cypher_runner import CypherRunner
+# from app.graph.cypher_runner import CypherRunner
+from app.graph.graph_builder import GraphBuilder
+from app.graph.networkx_renderer import NetworkXRenderer
+from app.graph.query_service import GraphQueryService
 from app.graph.database import Neo4jDatabase
+from app.graph.graph_loader import GraphLoader
+from app.graph.query_service import GraphQueryService
+from app.traceability.neo4j_traceability_repository import (
+    Neo4jTraceabilityRepository,
+)
+from app.graph.image_service import GraphImageService
 from app.holdings.loader import HoldingsLoader
 from app.reconciliation.loader import ReconciliationLoader
 from app.reconciliation.comparator import Comparator
@@ -25,6 +34,8 @@ from app.audit.database import AuditDatabase
 from app.audit.repository import AuditRepository
 from app.audit.service import AuditService
 from app.narrative.pdf.utilization import UtilizationCalculator
+from app.traceability.repository import TraceabilityRepository
+from app.traceability.service import TraceabilityService
 
 
 class Bootstrap:
@@ -49,8 +60,33 @@ class Bootstrap:
         self.databaseNeo4jDatabase.connect()
         self.databaseNeo4jDatabase.verify()
 
-        self.cypher_runner = CypherRunner(
+        # self.cypher_runner = CypherRunner(
+        #     driver=self.databaseNeo4jDatabase.get_driver(),
+        # )
+
+        self.graph_loader = GraphLoader(
             driver=self.databaseNeo4jDatabase.get_driver(),
+        )
+
+        self.graph_query_service = GraphQueryService(
+            driver=self.databaseNeo4jDatabase.get_driver(),
+        )
+
+        #
+        # Graph Rendering
+        #
+        self.graph_query_service = GraphQueryService(
+            driver=self.databaseNeo4jDatabase.get_driver(),
+        )
+
+        self.graph_builder = GraphBuilder()
+
+        self.graph_renderer = NetworkXRenderer()
+
+        self.graph_image_service = GraphImageService(
+            query=self.graph_query_service,
+            builder=self.graph_builder,
+            renderer=self.graph_renderer,
         )
 
         #
@@ -106,8 +142,18 @@ class Bootstrap:
         self.market_risk_calculator = MarketRiskCalculator(
             evaluator=self.limit_evaluator,
         )
+
+        self.traceability_repository = Neo4jTraceabilityRepository(
+            graph=self.graph_query_service,
+        )
+
+        self.traceability_service = TraceabilityService(
+            repository=self.traceability_repository,
+        )
         
-        self.traceability_builder = TraceabilityBuilder()
+        self.traceability_builder = TraceabilityBuilder(
+            service=self.traceability_service,
+        )
 
         #
         # Engine
@@ -148,7 +194,8 @@ class Bootstrap:
         self.utilization_calculator = UtilizationCalculator()
         
         self.report_writer = ReportWriter(
-            utilization=self.utilization_calculator
+            utilization=self.utilization_calculator,
+            graph_image=self.graph_image_service
         )
 
 

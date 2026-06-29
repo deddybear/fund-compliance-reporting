@@ -1,50 +1,18 @@
 from __future__ import annotations
 
+from abc import ABC
+from abc import abstractmethod
+
 from app.traceability.models import Traceability
-from app.traceability.registry import TRACEABILITY_REGISTRY
 
 
-class TraceabilityRepository:
+class TraceabilityRepository(ABC):
     """
-    Repository responsible for retrieving traceability metadata.
-
-    For now the data source is the in-memory registry.
-    Later this repository will be migrated to Neo4j without
-    affecting callers.
+    Abstract repository for traceability.
     """
 
-    def get(
+    def find(
         self,
-        figure: str,
+        metric_id: str,
     ) -> Traceability | None:
-        """
-        Retrieve traceability metadata for a figure.
-
-        Returns
-        -------
-        Traceability | None
-            Traceability metadata if found.
-        """
-
-        return TRACEABILITY_REGISTRY.get(
-            figure,
-        )
-
-    def exists(
-        self,
-        figure: str,
-    ) -> bool:
-        """
-        Check whether traceability exists.
-        """
-
-        return figure in TRACEABILITY_REGISTRY
-
-    def all(self) -> dict[str, Traceability]:
-        """
-        Return all registered traceability entries.
-
-        Mainly useful for debugging or testing.
-        """
-
-        return TRACEABILITY_REGISTRY.copy()
+        pass
