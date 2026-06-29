@@ -123,47 +123,47 @@ class CoverBuilder:
         #
         # OpenAI Model
         #
-        story.append(
-            Paragraph(
-                "<b>AI Model</b>",
-                self._styles.metadata,
-            )
-        )
+        # story.append(
+        #     Paragraph(
+        #         "<b>AI Model</b>",
+        #         self._styles.metadata,
+        #     )
+        # )
 
-        story.append(
-            Paragraph(
-                narrative.model,
-                self._styles.metadata,
-            )
-        )
+        # story.append(
+        #     Paragraph(
+        #         narrative.model,
+        #         self._styles.metadata,
+        #     )
+        # )
 
         #
         # Token Information
         #
-        if narrative.total_tokens is not None:
+        # if narrative.total_tokens is not None:
 
-            story.append(
-                Spacer(
-                    1,
-                    0.8 * cm,
-                )
-            )
+        #     story.append(
+        #         Spacer(
+        #             1,
+        #             0.8 * cm,
+        #         )
+        #     )
 
-            story.append(
-                Paragraph(
-                    "<b>Total Tokens</b>",
-                    self._styles.metadata,
-                )
-            )
+        #     story.append(
+        #         Paragraph(
+        #             "<b>Total Tokens</b>",
+        #             self._styles.metadata,
+        #         )
+        #     )
 
-            story.append(
-                Paragraph(
-                    str(
-                        narrative.total_tokens
-                    ),
-                    self._styles.metadata,
-                )
-            )
+        #     story.append(
+        #         Paragraph(
+        #             str(
+        #                 narrative.total_tokens
+        #             ),
+        #             self._styles.metadata,
+        #         )
+        #     )
 
         #
         # Next page

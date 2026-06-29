@@ -1,7 +1,6 @@
 from __future__ import annotations
-
+import re
 from decimal import Decimal
-
 from reportlab.lib import colors
 from reportlab.lib.units import cm
 from reportlab.platypus import (
@@ -14,6 +13,8 @@ from typing import Any
 from app.computation.models import ComputationResult
 from app.reconciliation.models import ReconciliationResult
 from app.narrative.pdf.styles import PDFStyles
+from app.narrative.pdf.utilization import UtilizationCalculator
+from app.reconciliation.mapping import to_display_name
 
 
 class TablesBuilder:
@@ -28,8 +29,9 @@ class TablesBuilder:
     def __init__(
         self,
         styles: PDFStyles,
+        utilization : UtilizationCalculator
     ) -> None:
-
+        self._utilization = utilization
         self._styles = styles
 
     # ---------------------------------------------------------
@@ -62,11 +64,18 @@ class TablesBuilder:
                 "Figure",
                 "Value",
                 "Limit",
+                "Utilization",
                 "Status",
             ]
         ]
 
         for figure in computation.figures:
+
+            utilization = self._utilization.calculate(
+                value=figure.value,
+                minimum=figure.minimum,
+                maximum=figure.maximum,
+            )
 
             rows.append(
                 [
@@ -75,7 +84,7 @@ class TablesBuilder:
                         self._styles.body_left,
                     ),
                     Paragraph(
-                        figure.figure,
+                        to_display_name(figure.figure),
                         self._styles.body_left,
                     ),
                     Paragraph(
@@ -86,6 +95,12 @@ class TablesBuilder:
                     ),
                     Paragraph(
                         figure.limit,
+                        self._styles.body,
+                    ),
+                    Paragraph(
+                        self._format_utilization(
+                            utilization,
+                        ),
                         self._styles.body,
                     ),
                     Paragraph(
@@ -100,11 +115,12 @@ class TablesBuilder:
         table = Table(
             rows,
             colWidths=[
-                3.5 * cm,
-                7 * cm,
-                2.5 * cm,
-                2.5 * cm,
-                2.5 * cm,
+                3.2 * cm,
+                6.0 * cm,
+                2.2 * cm,
+                2.4 * cm,
+                3.0 * cm,
+                2.2 * cm,
             ],
         )
 
@@ -321,3 +337,58 @@ class TablesBuilder:
             )
 
         return str(value)
+    
+
+    @staticmethod
+    def _format_utilization(
+        value: Decimal | None,
+    ) -> str:
+
+        if value is None:
+            return "-"
+
+        return f"{value.quantize(Decimal('0.1'))}%"
+    
+    def _normalize(
+        self,
+        text: str,
+    ) -> str:
+        """
+        Normalize text for metric matching.
+
+        Example
+
+            singapore_government_securities
+                ↓
+            singapore government securities
+
+            Portfolio-Modified-Duration
+                ↓
+            portfolio modified duration
+        """
+
+        text = text.lower()
+
+        text = text.replace("_", " ")
+
+        text = text.replace("-", " ")
+
+        #
+        # Remove punctuation.
+        #
+        text = re.sub(
+            r"[^\w\s]",
+            " ",
+            text,
+        )
+
+        #
+        # Collapse multiple spaces.
+        #
+        text = re.sub(
+            r"\s+",
+            " ",
+            text,
+        )
+
+        return text.strip()

@@ -84,6 +84,8 @@ class BaseCalculator:
                 minimum,
                 maximum,
             ),
+            minimum=minimum,
+            maximum=maximum,
             status=status,
             graph_path=graph_path,
             citation=citation,
@@ -129,3 +131,17 @@ class BaseCalculator:
 
         return dict(grouped)
 
+    @staticmethod
+    def _build_selector(
+        source: str,
+    ) -> Callable[[Holding], str]:
+
+        if source == "issuer":
+            return lambda h: h.issuer_name
+
+        if source == "parent_issuer":
+            return lambda h: h.parent_issuer
+
+        raise ValueError(
+            f"Unsupported grouping source: {source}"
+        )

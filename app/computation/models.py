@@ -35,6 +35,9 @@ class FigureResult:
 
     value: Decimal
 
+    minimum: Decimal | None
+    maximum: Decimal | None
+
     limit: str
 
     status: str

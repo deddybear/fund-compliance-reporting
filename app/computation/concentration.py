@@ -1,7 +1,6 @@
-
 from __future__ import annotations
 from decimal import Decimal
-from typing import Any
+from typing import Any, Callable
 from app.computation.base import BaseCalculator
 from app.computation.evaluator import LimitEvaluator
 from app.computation.models import FigureResult
@@ -63,10 +62,24 @@ class ConcentrationCalculator(BaseCalculator):
             if holding.issuer_name not in excluded
         ]
 
+        method = configuration.get(
+            "aggregation",
+            {},
+        ).get(
+            "issuer_concentration_method",
+            {},
+        ).get(
+            "source",
+            "issuer",
+        )
+
+        selector = self._build_selector(
+            method
+        )
 
         grouped = self.group_market_value_by_issuer(
             filtered_holdings,
-            key_selector=lambda h: h.issuer_name,
+            key_selector=selector,
         )
 
         maximum_market_value = self._maximum_market_value(
@@ -88,7 +101,9 @@ class ConcentrationCalculator(BaseCalculator):
 
         status = self._evaluator.evaluate(
             value=percentage,
-            status_values=configuration["evaluation"]["status_values"],
+            status_values=configuration["evaluation"][
+                "status_values"
+            ],
             minimum=minimum,
             maximum=maximum,
         )
@@ -121,9 +136,24 @@ class ConcentrationCalculator(BaseCalculator):
             if holding.issuer_type in gre_types
         ]
 
+        method = configuration.get(
+            "aggregation",
+            {},
+        ).get(
+            "gre_concentration_method",
+            {},
+        ).get(
+            "source",
+            "issuer",
+        )
+
+        selector = self._build_selector(
+            method
+        )
+
         grouped = self.group_market_value_by_issuer(
             filtered_holdings,
-            key_selector=lambda h: h.issuer_name,
+            key_selector=selector,
         )
 
         maximum_market_value = self._maximum_market_value(
@@ -149,7 +179,9 @@ class ConcentrationCalculator(BaseCalculator):
 
         status = self._evaluator.evaluate(
             value=percentage,
-            status_values=configuration["evaluation"]["status_values"],
+            status_values=configuration["evaluation"][
+                "status_values"
+            ],
             minimum=minimum,
             maximum=maximum,
         )
@@ -164,6 +196,21 @@ class ConcentrationCalculator(BaseCalculator):
         )
 
     @staticmethod
+    def _build_selector(
+        source: str,
+    ) -> Callable[[Holding], str]:
+
+        if source == "issuer":
+            return lambda h: h.issuer_name
+
+        if source == "parent_issuer":
+            return lambda h: h.parent_issuer
+
+        raise ValueError(
+            f"Unsupported grouping source: {source}"
+        )
+
+    @staticmethod
     def _maximum_market_value(
         grouped_market_value: dict[str, Decimal],
     ) -> Decimal:
@@ -174,3 +221,4 @@ class ConcentrationCalculator(BaseCalculator):
         return max(
             grouped_market_value.values()
         )
+

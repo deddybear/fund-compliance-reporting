@@ -75,46 +75,46 @@ class NarrativeBuilder:
             )
         )
 
-        story.append(
-            Paragraph(
-                "Generation Metadata",
-                self._styles.subheading,
-            )
-        )
+        # story.append(
+        #     Paragraph(
+        #         "Generation Metadata",
+        #         self._styles.subheading,
+        #     )
+        # )
 
-        metadata = [
-            (
-                "Model",
-                narrative.model,
-            ),
-            (
-                "Prompt Tokens",
-                self._value(
-                    narrative.prompt_tokens,
-                ),
-            ),
-            (
-                "Completion Tokens",
-                self._value(
-                    narrative.completion_tokens,
-                ),
-            ),
-            (
-                "Total Tokens",
-                self._value(
-                    narrative.total_tokens,
-                ),
-            ),
-        ]
+        # metadata = [
+        #     (
+        #         "Model",
+        #         narrative.model,
+        #     ),
+        #     (
+        #         "Prompt Tokens",
+        #         self._value(
+        #             narrative.prompt_tokens,
+        #         ),
+        #     ),
+        #     (
+        #         "Completion Tokens",
+        #         self._value(
+        #             narrative.completion_tokens,
+        #         ),
+        #     ),
+        #     (
+        #         "Total Tokens",
+        #         self._value(
+        #             narrative.total_tokens,
+        #         ),
+        #     ),
+        # ]
 
-        for label, value in metadata:
+        # for label, value in metadata:
 
-            story.append(
-                Paragraph(
-                    f"<b>{label}</b>: {value}",
-                    self._styles.body_left,
-                )
-            )
+        #     story.append(
+        #         Paragraph(
+        #             f"<b>{label}</b>: {value}",
+        #             self._styles.body_left,
+        #         )
+        #     )
 
     @staticmethod
     def _split_paragraphs(

@@ -46,23 +46,16 @@ class TraceabilityBuilder:
             enriched.append(
 
                 FigureResult(
-
                     section=figure.section,
-
                     figure=figure.figure,
-
                     value=figure.value,
-
                     limit=figure.limit,
-
                     status=figure.status,
-
                     utilization=figure.utilization,
-
                     graph_path=traceability.graph_path,
-
                     citation=str(traceability.citation),
-
+                    minimum=figure.minimum,
+                    maximum=figure.maximum
                 )
 
             )

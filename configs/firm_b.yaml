@@ -32,17 +32,40 @@ classification:
 
   gre_issuer_types:
     - GRE
-    
+
   #
   # Difference #1
   #
   fallen_angels:
-    treatment: investment_grade
+    enabled: true
+
+    #
+    # Downgraded IG bonds continue to be treated
+    # as Investment Grade.
+    #
+    treatment: non_investment_grade
+
     watchlist_period_days: 180
 
 aggregation:
+
+  #
+  # Difference #1
+  #
   non_ig_method:
-    source: asset_class
+
+    #
+    # Compute Non-IG exposure using
+    # current credit rating instead
+    # of asset class.
+    #
+    source: credit_rating
+
+    #
+    # Exclude fallen angels from
+    # Non-IG exposure.
+    #
+    include_fallen_angels: true
 
   #
   # Difference #2
@@ -114,12 +137,14 @@ evaluation:
     fail: BREACH
 
 reporting:
+
   #
   # Difference #3
   #
   utilization_format:
     type: basis_points
     precision: 0
+    rounding: truncate
 
   include_graph_path: true
   include_citation: true

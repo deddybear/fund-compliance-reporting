@@ -1,9 +1,11 @@
 from __future__ import annotations
-
 from abc import ABC
 from abc import abstractmethod
-
-from app.narrative.models import NarrativeContext, NarrativeResult
+from app.computation.models import ComputationResult
+from app.narrative.models import (
+    NarrativeContext,
+    NarrativeResult,
+)
 
 
 class NarrativeGenerator(ABC):
@@ -17,7 +19,9 @@ class NarrativeGenerator(ABC):
     @abstractmethod
     def generate(
         self,
+        *,
         context: NarrativeContext,
+        computation: ComputationResult,
     ) -> NarrativeResult:
         """
         Generate a narrative from the supplied context.

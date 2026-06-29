@@ -11,16 +11,18 @@ from app.narrative.pdf.tables import TablesBuilder
 from app.narrative.pdf.narrative import NarrativeBuilder
 from app.narrative.pdf.footer import FooterBuilder
 from app.narrative.markdown.builder import write_markdown
-
+from app.narrative.pdf.utilization import UtilizationCalculator
 
 class ReportWriter:
     """
     Writes generated narrative reports to disk.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, utilization: UtilizationCalculator,) -> None:
 
         self.styles = PDFStyles()
+
+        self._utilization = utilization
 
         self.cover = CoverBuilder(
             self.styles,
@@ -28,6 +30,7 @@ class ReportWriter:
 
         self.tables = TablesBuilder(
             self.styles,
+            self._utilization,
         )
 
         self.narrative = NarrativeBuilder(
@@ -37,6 +40,8 @@ class ReportWriter:
         self.footer = FooterBuilder(
             self.styles,
         )
+        
+        
 
     def markdown(
         self,

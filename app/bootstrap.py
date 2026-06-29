@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pathlib import Path
 from app.computation.aggregate import AggregateCalculator
 from app.computation.allocation import AllocationCalculator
 from app.computation.concentration import ConcentrationCalculator
@@ -15,10 +16,15 @@ from app.reconciliation.loader import ReconciliationLoader
 from app.reconciliation.comparator import Comparator
 from app.reconciliation.engine import ReconciliationEngine
 from app.narrative.builder import NarrativeBuilder
+from app.narrative.firewall import NarrativeFirewall
 from app.narrative.prompt import PromptBuilder
 from app.narrative.report import ReportWriter
 from app.narrative.openai_generator import OpenAINarrativeGenerator
 from app.traceability.builder import TraceabilityBuilder
+from app.audit.database import AuditDatabase
+from app.audit.repository import AuditRepository
+from app.audit.service import AuditService
+from app.narrative.pdf.utilization import UtilizationCalculator
 
 
 class Bootstrap:
@@ -36,15 +42,34 @@ class Bootstrap:
         #
         # Neo4j
         #
-        self.database = Neo4jDatabase(
+        self.databaseNeo4jDatabase = Neo4jDatabase(
             settings=self.settings,
         )
 
-        self.database.connect()
-        self.database.verify()
+        self.databaseNeo4jDatabase.connect()
+        self.databaseNeo4jDatabase.verify()
 
         self.cypher_runner = CypherRunner(
-            driver=self.database.get_driver(),
+            driver=self.databaseNeo4jDatabase.get_driver(),
+        )
+
+        #
+        # Audit
+        #
+        self.audit_database = AuditDatabase(
+            database_path=Path(
+                "storage/audit/audit.db"
+            ),
+        )
+
+        self.audit_database.initialize()
+
+        self.audit_repository = AuditRepository(
+            database=self.audit_database,
+        )
+
+        self.audit_service = AuditService(
+            repository=self.audit_repository,
         )
 
         #
@@ -111,14 +136,20 @@ class Bootstrap:
         self.prompt_builder = PromptBuilder()
         
         self.narrative_builder = NarrativeBuilder()
+        self.narrative_firewall= NarrativeFirewall()
         
         self.narrative_generator = OpenAINarrativeGenerator(
             api_key=self.settings.openai_api_key,
             model=self.settings.openai_model,
             prompt_builder=self.prompt_builder,
+            firewall=self.narrative_firewall
         )
+
+        self.utilization_calculator = UtilizationCalculator()
         
-        self.report_writer = ReportWriter()
+        self.report_writer = ReportWriter(
+            utilization=self.utilization_calculator
+        )
 
 
     def shutdown(self) -> None:
@@ -126,5 +157,6 @@ class Bootstrap:
         Release application resources.
         """
 
-        self.database.close()
+        self.databaseNeo4jDatabase.close()
+        self.audit_database.close()
 
