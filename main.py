@@ -2,13 +2,43 @@ from __future__ import annotations
 from pathlib import Path
 from app.bootstrap import Bootstrap
 from app.pipeline import Pipeline
+from dotenv import load_dotenv
 import traceback
 import sys
+import os
+
 
 def main() -> None:
+    
     """
     Application entry point.
     """
+    load_dotenv()
+    
+    # Check Env file
+    neo4j_uri=os.getenv("NEO4J_URI", "")
+    neo4j_username=os.getenv("NEO4J_USERNAME", "")
+    neo4j_password=os.getenv("NEO4J_PASSWORD", "")
+    openai_api_key=os.getenv("OPENAI_API_KEY", "")
+    openai_model=os.getenv("OPENAI_API_MODEL", "")
+
+    required_envs = {
+        "NEO4J_URI": neo4j_uri,
+        "NEO4J_USERNAME": neo4j_username,
+        "NEO4J_PASSWORD": neo4j_password,
+        "OPENAI_API_KEY": openai_api_key,
+        "OPENAI_API_MODEL": openai_model,
+    }
+
+    missing = [key for key, value in required_envs.items() if not value]
+
+    if missing:
+        print()
+        print("=" * 80)
+        print("APPLICATION ERROR")
+        print("=" * 80)
+        print(f"Missing env variables: {', '.join(missing)}")
+        return
 
     bootstrap = Bootstrap()
 
@@ -76,6 +106,12 @@ def main() -> None:
 
         print()
 
+        for figure in computation.figures:
+            print("=" * 60)
+            print(figure.figure)
+            print("Graph :", figure.graph_path)
+            print("Citation :", figure.citation)
+
         #
         # Narrative
         #
@@ -97,14 +133,14 @@ def main() -> None:
         print(f"Saved To : {report_path}")
         print(f"Model    : {narrative.model}")
 
-        if narrative.prompt_tokens is not None:
-            print(f"Prompt Tokens     : {narrative.prompt_tokens}")
+        # if narrative.prompt_tokens is not None:
+        #     print(f"Prompt Tokens     : {narrative.prompt_tokens}")
 
-        if narrative.completion_tokens is not None:
-            print(f"Completion Tokens : {narrative.completion_tokens}")
+        # if narrative.completion_tokens is not None:
+        #     print(f"Completion Tokens : {narrative.completion_tokens}")
 
-        if narrative.total_tokens is not None:
-            print(f"Total Tokens      : {narrative.total_tokens}")
+        # if narrative.total_tokens is not None:
+        #     print(f"Total Tokens      : {narrative.total_tokens}")
 
 
     except Exception as e :

@@ -18,7 +18,7 @@ from app.narrative.builder import NarrativeBuilder
 from app.narrative.prompt import PromptBuilder
 from app.narrative.report import ReportWriter
 from app.narrative.openai_generator import OpenAINarrativeGenerator
-
+from app.traceability.builder import TraceabilityBuilder
 
 
 class Bootstrap:
@@ -81,6 +81,8 @@ class Bootstrap:
         self.market_risk_calculator = MarketRiskCalculator(
             evaluator=self.limit_evaluator,
         )
+        
+        self.traceability_builder = TraceabilityBuilder()
 
         #
         # Engine
@@ -91,6 +93,7 @@ class Bootstrap:
             concentration=self.concentration_calculator,
             liquidity=self.liquidity_calculator,
             market_risk=self.market_risk_calculator,
+            traceability=self.traceability_builder,
         )
 
         #

@@ -6,6 +6,7 @@ from app.computation.concentration import ConcentrationCalculator
 from app.computation.liquidity import LiquidityCalculator
 from app.computation.market_risk import MarketRiskCalculator
 from app.computation.models import ComputationResult
+from app.traceability.builder import TraceabilityBuilder
 from app.holdings.models import Holding
 
 
@@ -21,6 +22,7 @@ class ComputationEngine:
         concentration: ConcentrationCalculator,
         liquidity: LiquidityCalculator,
         market_risk: MarketRiskCalculator,
+        traceability: TraceabilityBuilder,
     ) -> None:
         self._calculators = [
             allocation,
@@ -29,6 +31,8 @@ class ComputationEngine:
             liquidity,
             market_risk,
         ]
+
+        self._traceability = traceability
 
     def compute(
         self,
@@ -49,6 +53,13 @@ class ComputationEngine:
                     configuration=configuration,
                 )
             )
+
+        #
+        # Attach graph path and citation
+        #
+        figures = self._traceability.enrich(
+            figures,
+        )    
 
         return ComputationResult(
             figures=figures,
