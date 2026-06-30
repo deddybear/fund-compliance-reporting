@@ -67,6 +67,8 @@ class LiquidityCalculator(BaseCalculator):
         )
 
         result = self.build_result(
+            graph_path=None,
+            metric_id="liquidity_ratio",
             section="Liquidity",
             figure="Liquidity Ratio",
             value=liquidity_ratio,

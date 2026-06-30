@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from decimal import Decimal
+from typing import Any
 
 
 @dataclass(slots=True)
@@ -14,13 +15,16 @@ class ComputedFigure:
 
     value: Decimal
 
+    metric_id: str
+
+
     limit: str
 
     status: str
 
     utilization: Decimal | None = None
 
-    graph_path: str | None = None
+    graph_path: list[dict[str, Any]] | None = None
 
     citation: str | None = None
 
@@ -37,6 +41,8 @@ class FigureResult:
 
     minimum: Decimal | None
     maximum: Decimal | None
+
+    metric_id: str
 
     limit: str
 

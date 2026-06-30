@@ -65,8 +65,10 @@ class AllocationCalculator(BaseCalculator):
 
             figures.append(
                 self.build_result(
+                    metric_id=figure_name,
+                    graph_path=None,
                     section="Allocation",
-                    figure=figure_name,
+                    figure=asset_class,
                     value=percentage,
                     minimum=minimum,
                     maximum=maximum,

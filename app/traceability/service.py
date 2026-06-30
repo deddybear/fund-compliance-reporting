@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from app.traceability.models import Traceability
-from app.traceability.repository import TraceabilityRepository
+from app.traceability.neo4j_traceability_repository import Neo4jTraceabilityRepository
 
 
 class TraceabilityService:
 
     def __init__(
         self,
-        repository: TraceabilityRepository,
+        repository: Neo4jTraceabilityRepository,
     ) -> None:
 
         self._repository = repository

@@ -60,6 +60,16 @@ class GraphLoader:
                 configuration,
             )
 
+            self._load_citations(
+                session,
+                configuration,
+            )
+
+            self._load_relationships(
+                session,
+                configuration,
+            )
+
     # ---------------------------------------------------------
 
     @staticmethod
@@ -229,8 +239,113 @@ class GraphLoader:
                     )
 
     @staticmethod
+    def _load_citations(
+        session,
+        configuration: dict[str, Any],
+    ) -> None:
+
+        #
+        # TODO:
+        # nanti source document berasal dari parser PDF
+        #
+
+        metrics = []
+
+        allocation = configuration["classification"]["allocation"]
+
+        metrics.extend(
+            allocation.keys()
+        )
+
+        metrics.extend(
+            [
+                "aggregate_non_ig_exposure",
+                "single_issuer_concentration",
+                "gre_concentration",
+                "liquidity_ratio",
+                "duration",
+                "dv01",
+            ]
+        )
+
+        for metric_id in metrics:
+
+            session.run(
+                """
+                MERGE (c:Citation {id:$id})
+
+                SET
+                    c.source_document='sample_guideline.pdf',
+                    c.page=1,
+                    c.chunk_id=$id,
+                    c.summary=$id
+                """,
+                id=metric_id,
+            )
+
+    @staticmethod
     def _load_relationships(
         session,
-        configuration,
+        configuration: dict[str, Any],
     ) -> None:
-        return
+
+        profile = configuration["profile"]["name"]
+    
+        allocation = configuration["classification"]["allocation"]
+    
+        metric_ids = list(
+            allocation.keys()
+        )
+    
+        metric_ids.extend(
+            [
+                "aggregate_non_ig_exposure",
+                "single_issuer_concentration",
+                "gre_concentration",
+                "liquidity_ratio",
+                "duration",
+                "dv01",
+            ]
+        )
+    
+        for metric_id in metric_ids:
+        
+            #
+            # Profile -> Metric
+            #
+            session.run(
+                """
+                MATCH (p:Profile {name:$profile})
+                MATCH (m:Metric {id:$metric})
+    
+                MERGE (p)-[:USES]->(m)
+                """,
+                profile=profile,
+                metric=metric_id,
+            )
+    
+            #
+            # Metric -> Rule
+            #
+            session.run(
+                """
+                MATCH (m:Metric {id:$metric})
+                MATCH (r:Rule {id:$metric})
+    
+                MERGE (m)-[:HAS_RULE]->(r)
+                """,
+                metric=metric_id,
+            )
+    
+            #
+            # Rule -> Citation
+            #
+            session.run(
+                """
+                MATCH (r:Rule {id:$metric})
+                MATCH (c:Citation {id:$metric})
+    
+                MERGE (r)-[:HAS_CITATION]->(c)
+                """,
+                metric=metric_id,
+            )

@@ -109,6 +109,8 @@ class ConcentrationCalculator(BaseCalculator):
         )
 
         return self.build_result(
+            graph_path=None,
+            metric_id="single_issuer_concentration",
             section="Concentration",
             figure="Single Issuer Concentration",
             value=percentage,
@@ -187,6 +189,8 @@ class ConcentrationCalculator(BaseCalculator):
         )
 
         return self.build_result(
+            graph_path=None,
+            metric_id="gre_concentration",
             section="Concentration",
             figure="GRE Concentration",
             value=percentage,

@@ -62,13 +62,14 @@ class BaseCalculator:
     def build_result(
         self,
         *,
+        metric_id: str,
         section: str,
         figure: str,
         value: Decimal,
         minimum: Decimal | None,
         maximum: Decimal | None,
         status: str,
-        graph_path: str = "",
+        graph_path: None,
         citation: str = "",
         utilization: Decimal | None = None,
     ) -> FigureResult:
@@ -77,6 +78,7 @@ class BaseCalculator:
         """
 
         return FigureResult(
+            metric_id=metric_id,
             section=section,
             figure=figure,
             value=value,

@@ -1,6 +1,23 @@
 """
 Mapping between internal figure names and the answer key metric names.
 """
+FIGURE_RESULT_MAPPING = {
+    # From Excel : From Figure result
+    "Singapore Government Securities": "Singapore Government Securities",
+    "MAS Bills" : "MAS Bills",
+    "Investment Grade Corporate Bonds": "Investment Grade Corporate Bonds",
+    "High Yield Bonds": "High Yield Bonds",
+    "Foreign Currency Bonds (hedged)" : "Foreign Currency Bonds",
+    "Structured Credit (ABS/MBS)" : "Structured Credit",
+    "Cash & Cash Equivalents": "Cash & Cash Equivalents",
+    "Aggregate non-IG exposure": "Aggregate non-IG exposure",
+    "Largest single corporate issuer": "Largest single corporate issuer",
+    "Largest GRE issuer": "Largest GRE issuer",
+    "Liquid assets ratio": "Liquid assets ratio",
+    "Portfolio modified duration": "Portfolio modified duration",
+    "Portfolio DV01": "Portfolio DV01"
+
+}
 
 FIGURE_MAPPING = {
     "singapore_government_securities":

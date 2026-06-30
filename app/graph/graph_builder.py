@@ -32,13 +32,11 @@ class GraphBuilder:
         ):
 
             render_data.nodes.append(
-
                 GraphNode(
-                    id=str(node.id),
+                    id=node.element_id,
                     label=self._label(node),
                     properties=dict(node),
                 )
-
             )
 
         #
@@ -50,17 +48,11 @@ class GraphBuilder:
         ):
 
             render_data.edges.append(
-
                 GraphEdge(
-                    source=str(
-                        relationship.start_node.id,
-                    ),
-                    target=str(
-                        relationship.end_node.id,
-                    ),
+                    source=relationship.start_node.element_id,
+                    target=relationship.end_node.element_id,
                     relationship=relationship.type,
                 )
-
             )
 
         return render_data
@@ -70,23 +62,110 @@ class GraphBuilder:
         node,
     ) -> str:
         """
-        Determine the display label of a Neo4j node.
+        Determine display label.
         """
 
         properties = dict(node)
+        labels = set(node.labels)
 
-        for key in (
-            "name",
-            "title",
-            "figure",
-            "metric",
-            "id",
-        ):
-            if key in properties:
-                return str(
-                    properties[key]
+        #
+        # Metric
+        #
+        if "Metric" in labels:
+
+            return properties.get(
+                "name",
+                properties.get("id", "Metric"),
+            )
+
+        #
+        # Rule
+        #
+        if "Rule" in labels:
+
+            minimum = properties.get("minimum")
+            maximum = properties.get("maximum")
+
+            if minimum is not None and maximum is not None:
+                return (
+                    "Rule\n"
+                    f"{minimum}% – {maximum}%"
                 )
 
-        return ":".join(
-            list(node.labels)
+            if minimum is not None:
+                return (
+                    "Rule\n"
+                    f"Minimum {minimum}%"
+                )
+
+            if maximum is not None:
+                return (
+                    "Rule\n"
+                    f"Maximum {maximum}%"
+                )
+
+            return "Rule"
+
+        #
+        # Citation
+        #
+        if "Citation" in labels:
+
+            document = properties.get(
+                "source_document",
+                "Document",
+            )
+
+            #
+            # Remove extension for cleaner graph.
+            #
+            if "." in document:
+                document = document.rsplit(".", 1)[0]
+
+            page = properties.get(
+                "page",
+                "-",
+            )
+
+            return (
+                "Citation\n"
+                f"{document}\n"
+                f"Page {page}"
+            )
+
+        #
+        # Profile
+        #
+        if "Profile" in labels:
+
+            return (
+                "Profile\n"
+                + properties.get(
+                    "name",
+                    "",
+                )
+            )
+
+        #
+        # Method
+        #
+        if "Method" in labels:
+
+            return (
+                "Method\n"
+                + properties.get(
+                    "name",
+                    "",
+                )
+            )
+
+        #
+        # Fallback
+        #
+        return properties.get(
+            "name",
+            properties.get(
+                "id",
+                next(iter(labels), "Node"),
+            ),
         )

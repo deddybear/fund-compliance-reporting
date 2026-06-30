@@ -1,53 +1,57 @@
+// =====================================================
+// Metrics
+// =====================================================
+
 MERGE (:Metric {
-    id: "allocation_sgs",
+    id: "singapore_government_securities",
     name: "Singapore Government Securities",
     section: "Allocation"
 });
 
 MERGE (:Metric {
-    id: "allocation_mas",
+    id: "mas_bills",
     name: "MAS Bills",
     section: "Allocation"
 });
 
 MERGE (:Metric {
-    id: "allocation_ig",
+    id: "investment_grade_corporate_bonds",
     name: "Investment Grade Corporate Bonds",
     section: "Allocation"
 });
 
 MERGE (:Metric {
-    id: "allocation_hy",
+    id: "high_yield_bonds",
     name: "High Yield Bonds",
     section: "Allocation"
 });
 
 MERGE (:Metric {
-    id: "allocation_fx",
+    id: "foreign_currency_bonds",
     name: "Foreign Currency Bonds",
     section: "Allocation"
 });
 
 MERGE (:Metric {
-    id: "allocation_sc",
+    id: "structured_credit",
     name: "Structured Credit",
     section: "Allocation"
 });
 
 MERGE (:Metric {
-    id: "allocation_cash",
+    id: "cash_and_cash_equivalents",
     name: "Cash & Cash Equivalents",
     section: "Allocation"
 });
 
 MERGE (:Metric {
-    id: "aggregate_non_ig",
+    id: "aggregate_non_ig_exposure",
     name: "Aggregate Non-IG Exposure",
     section: "Aggregate"
 });
 
 MERGE (:Metric {
-    id: "single_issuer",
+    id: "single_issuer_concentration",
     name: "Single Issuer Concentration",
     section: "Concentration"
 });
@@ -65,13 +69,13 @@ MERGE (:Metric {
 });
 
 MERGE (:Metric {
-    id: "portfolio_duration",
+    id: "duration",
     name: "Portfolio Modified Duration",
     section: "Market Risk"
 });
 
 MERGE (:Metric {
-    id: "portfolio_dv01",
+    id: "dv01",
     name: "Portfolio DV01",
     section: "Market Risk"
 });

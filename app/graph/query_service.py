@@ -4,166 +4,169 @@ from neo4j import Driver
 
 
 class GraphQueryService:
+    """
+    Centralized Neo4j query layer.
+
+    Every repository should use this service instead
+    of writing Cypher directly.
+    """
+
+    def __init__(
+        self,
+        driver: Driver,
+    ) -> None:
+
+        self._driver = driver
+
+    # ---------------------------------------------------------
+    # Profile
+    # ---------------------------------------------------------
+
+    def get_profile(
+        self,
+        profile_name: str,
+    ) -> dict | None:
+
+        query = """
+        MATCH (p:Profile {name:$profile})
+        RETURN p
         """
-        Centralized Neo4j query layer.
 
-        Every repository should use this service instead
-        of writing Cypher directly.
+        with self._driver.session() as session:
+
+            record = session.run(
+                query,
+                profile=profile_name,
+            ).single()
+
+        if record is None:
+            return None
+
+        return dict(record["p"])
+
+    # ---------------------------------------------------------
+    # Metric
+    # ---------------------------------------------------------
+
+    def get_metric(
+        self,
+        metric_id: str,
+    ) -> dict | None:
+
+        query = """
+        MATCH (m:Metric {id:$metric})
+        RETURN m
         """
 
-        def __init__(
-            self,
-            driver: Driver,
-        ) -> None:
+        with self._driver.session() as session:
 
-            self._driver = driver
+            record = session.run(
+                query,
+                metric=metric_id,
+            ).single()
 
-        # ---------------------------------------------------------
-        # Profile
-        # ---------------------------------------------------------
+        if record is None:
+            return None
 
-        def get_profile(
-            self,
-            profile_name: str,
-        ) -> dict | None:
+        return dict(record["m"])
 
-            query = """
-            MATCH (p:Profile {name:$profile})
-            RETURN p
-            """
+    # ---------------------------------------------------------
+    # Rule
+    # ---------------------------------------------------------
 
-            with self._driver.session() as session:
+    def get_rule(
+        self,
+        metric_id: str,
+    ) -> dict | None:
 
-                record = session.run(
-                    query,
-                    profile=profile_name,
-                ).single()
+        query = """
+        MATCH (m:Metric {id:$metric})
+              -[:HAS_RULE]->
+              (r:Rule)
+        RETURN r
+        """
 
-            if record is None:
-                return None
+        with self._driver.session() as session:
 
-            return dict(record["p"])
+            record = session.run(
+                query,
+                metric=metric_id,
+            ).single()
 
-        # ---------------------------------------------------------
-        # Metric
-        # ---------------------------------------------------------
+        if record is None:
+            return None
 
-        def get_metric(
-            self,
-            metric_id: str,
-        ) -> dict | None:
+        return dict(record["r"])
 
-            query = """
-            MATCH (m:Metric {id:$metric})
-            RETURN m
-            """
+    # ---------------------------------------------------------
+    # Traceability
+    # ---------------------------------------------------------
 
-            with self._driver.session() as session:
+    def get_traceability(
+        self,
+        metric_id: str,
+    ) -> dict | None:
 
-                record = session.run(
-                    query,
-                    metric=metric_id,
-                ).single()
+        query = """
+        MATCH (m:Metric {id:$metric})
 
-            if record is None:
-                return None
+        OPTIONAL MATCH (m)-[:HAS_RULE]->(r:Rule)
+        OPTIONAL MATCH (r)-[:HAS_CITATION]->(c:Citation)
 
-            return dict(record["m"])
+        RETURN
+            m,
+            r,
+            c
+        """
 
-        # ---------------------------------------------------------
-        # Rule
-        # ---------------------------------------------------------
+        with self._driver.session() as session:
 
-        def get_rule(
-            self,
-            metric_id: str,
-        ) -> dict | None:
+            record = session.run(
+                query,
+                metric=metric_id,
+            ).single()
 
-            query = """
-            MATCH (m:Metric {id:$metric})
-                -[:HAS_RULE]->
-                (r:Rule)
-            RETURN r
-            """
+        if record is None:
+            return None
 
-            with self._driver.session() as session:
+        return {
+            "metric": dict(record["m"]),
+            "rule": dict(record["r"]) if record["r"] else None,
+            "citation": dict(record["c"]) if record["c"] else None,
+        }
 
-                record = session.run(
-                    query,
-                    metric=metric_id,
-                ).single()
+    # ---------------------------------------------------------
+    # Graph Path
+    # ---------------------------------------------------------
 
-            if record is None:
-                return None
+    def get_graph_path(
+        self,
+        metric_id: str,
+    ) -> dict | None:
 
-            return dict(record["r"])
+        query = """
+        MATCH p=(m:Metric {id:$metric})
+              -[:HAS_RULE]->
+              (r:Rule)
+              -[:HAS_CITATION]->
+              (c:Citation)
 
-        # ---------------------------------------------------------
-        # Traceability
-        # ---------------------------------------------------------
+        RETURN
+            nodes(p) AS nodes,
+            relationships(p) AS relationships
+        """
 
-        def get_traceability(
-            self,
-            metric_id: str,
-        ) -> dict | None:
+        with self._driver.session() as session:
 
-            query = """
-            MATCH (m:Metric {id:$metric})
-                -[:HAS_RULE]->
-                (r:Rule)
-                -[:HAS_CITATION]->
-                (c:Citation)
+            record = session.run(
+                query,
+                metric=metric_id,
+            ).single()
 
-            RETURN
-                m,
-                r,
-                c
-            """
+        if record is None:
+            return None
 
-            with self._driver.session() as session:
-
-                record = session.run(
-                    query,
-                    metric=metric_id,
-                ).single()
-
-            if record is None:
-                return None
-
-            return {
-                "metric": dict(record["m"]),
-                "rule": dict(record["r"]),
-                "citation": dict(record["c"]),
-            }
-
-        # ---------------------------------------------------------
-        # Graph Path
-        # ---------------------------------------------------------
-
-        def get_graph_path(
-            self,
-            metric_id: str,
-        ) -> dict | None:
-        
-            query = """
-            MATCH p=(m:Metric {id:$metric})-[*1..4]-(n)
-            RETURN
-                nodes(p) AS nodes,
-                relationships(p) AS relationships
-            LIMIT 1
-            """
-        
-            with self._driver.session() as session:
-            
-                record = session.run(
-                    query,
-                    metric=metric_id,
-                ).single()
-        
-            if record is None:
-                return None
-        
-            return {
-                "nodes": record["nodes"],
-                "relationships": record["relationships"],
-            }
+        return {
+            "nodes": record["nodes"],
+            "relationships": record["relationships"],
+        }

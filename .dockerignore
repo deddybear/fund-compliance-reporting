@@ -1,1 +1,3 @@
 .venv
+/storage/reports/*.pdf
+/storage/graphs/*.png

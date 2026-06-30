@@ -30,7 +30,7 @@ class TraceabilityBuilder:
         for figure in figures:
 
             traceability = self._service.find(
-                figure.figure
+                figure.metric_id
             )
 
             #
@@ -47,6 +47,7 @@ class TraceabilityBuilder:
             enriched.append(
 
                 FigureResult(
+                    metric_id=figure.metric_id,
                     section=figure.section,
                     figure=figure.figure,
                     value=figure.value,

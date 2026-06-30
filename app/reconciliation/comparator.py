@@ -50,8 +50,9 @@ class Comparator:
 
         for expected_figure in expected:
 
+            # Prevent indexing with column excel 
             actual_figure = actual_lookup.get(
-                expected_figure.metric
+                expected_figure.metric_mapping
             )
 
             #
@@ -74,16 +75,23 @@ class Comparator:
 
                 continue
 
+            # print(f"figure {expected_figure.metric} : {actual_figure.value}")
+
             difference = abs(
                 expected_figure.value
                 - actual_figure.value
             )
+
+            # print(f"figure {expected_figure.metric} : {difference}")
 
             matched = (
                 difference <= tolerance
                 and expected_figure.status.strip().upper()
                 == actual_figure.status.strip().upper()
             )
+
+            # print(f"figure {expected_figure.metric} : {matched}")
+
 
             items.append(
                 ReconciliationItem(

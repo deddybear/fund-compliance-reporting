@@ -12,7 +12,7 @@ from app.narrative.pdf.styles import PDFStyles
 
 class NarrativeBuilder:
     """
-    Builds the AI Narrative section.
+    Builds the Conclusion Narrative section.
     """
 
     def __init__(
@@ -28,12 +28,12 @@ class NarrativeBuilder:
         narrative: NarrativeResult,
     ) -> None:
         """
-        Build AI Narrative section.
+        Build Conclusion Narrative section.
         """
 
         story.append(
             Paragraph(
-                "AI Compliance Narrative",
+                "Conclusion",
                 self._styles.heading,
             )
         )

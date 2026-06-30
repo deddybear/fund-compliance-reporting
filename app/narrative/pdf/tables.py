@@ -66,6 +66,7 @@ class TablesBuilder:
                 "Limit",
                 "Utilization",
                 "Status",
+                "Source (graph path → doc/page)"
             ]
         ]
 
@@ -109,21 +110,25 @@ class TablesBuilder:
                             figure.status,
                         ),
                     ),
+                    Paragraph(
+                        figure.graph_path or "",
+                        self._styles.body_left,
+                    ),
                 ]
             )
 
         table = Table(
             rows,
             colWidths=[
-                3.2 * cm,
-                6.0 * cm,
-                2.2 * cm,
-                2.4 * cm,
-                3.0 * cm,
-                2.2 * cm,
+                2.0 * cm,   # Section
+                3.8 * cm,   # Figure
+                1.5 * cm,   # Value
+                1.8 * cm,   # Limit
+                2.0 * cm,   # Utilization
+                1.8 * cm,   # Status
+                4.8 * cm,   # Source
             ],
         )
-
         table.setStyle(
             self._default_table_style()
         )

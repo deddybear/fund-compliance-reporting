@@ -9,8 +9,7 @@ from app.audit.database import AuditDatabase
 from app.audit.repository import AuditRepository
 from app.audit.service import AuditService
 from app.configuration.profiles import (
-    available_profiles,
-    profile_exists,
+    available_profiles
 )
 import traceback
 import sys
@@ -27,7 +26,7 @@ def main() -> None:
     #
     audit_database = AuditDatabase(
         database_path=Path(
-            "storage/audit/audit.db"
+            "storage/db/audit.db"
         ),
     )
 
@@ -174,7 +173,7 @@ def main() -> None:
             print(available_profiles())
             return
 
-        bootstrap = Bootstrap()
+        bootstrap = Bootstrap(args=str(args.profile))
 
         bootstrap.audit_service.log( 
             event_type=AuditEventType.APPLICATION_STARTED, 
@@ -226,7 +225,7 @@ def main() -> None:
             print(
                 f"{symbol} "
                 f"{item.figure:<45}"
-                f"Expected={item.expected_value:<10}"
+                f"Expected={item.expected_value:<15}"
                 f"Actual={item.actual_value:<10}"
             )
 
@@ -240,16 +239,16 @@ def main() -> None:
             f"Failed  : {reconciliation.failed_count}"
         )
 
-        print()
-        print("=" * 80)
-        print("Traceability")
-        print("=" * 80)
+        # print()
+        # print("=" * 80)
+        # print("Traceability")
+        # print("=" * 80)
 
-        for figure in computation.figures:
-            print("=" * 60)
-            print(figure.figure)
-            print("Graph :", figure.graph_path)
-            print("Citation :", figure.citation)
+        # for figure in computation.figures:
+        #     print("=" * 60)
+        #     print(figure.figure)
+        #     print("Graph :", figure.graph_path)
+        #     print("Citation :", figure.citation)
 
         #
         # Narrative

@@ -106,6 +106,8 @@ class AggregateCalculator(BaseCalculator):
         )
 
         result = self.build_result(
+            metric_id="aggregate_non_ig_exposure",
+            graph_path=None,
             section="Aggregate",
             figure="Aggregate Non-IG Exposure",
             value=percentage,

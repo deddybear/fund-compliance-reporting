@@ -33,7 +33,12 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-    command: uv run python main.py
+    command: >
+      sh -c "
+      uv run python main.py --profile firm_a &
+      uv run python main.py --profile firm_b &
+      wait
+      "
     networks:
       - fund-compliance-network
 volumes:

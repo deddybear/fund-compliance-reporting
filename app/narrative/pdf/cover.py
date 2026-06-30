@@ -71,18 +71,18 @@ class CoverBuilder:
         )
 
         #
-        # Prepared By
+        # White Space
         #
         story.append(
             Paragraph(
-                "<b>Prepared By</b>",
+                "",
                 self._styles.metadata,
             )
         )
 
         story.append(
             Paragraph(
-                "AI Compliance Engine",
+                "",
                 self._styles.metadata,
             )
         )

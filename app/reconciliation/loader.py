@@ -4,7 +4,7 @@ from decimal import Decimal
 from pathlib import Path
 from openpyxl import load_workbook
 from app.reconciliation.models import ExpectedFigure
-
+from app.reconciliation.mapping import FIGURE_RESULT_MAPPING
 
 class ReconciliationLoader:
     """
@@ -44,8 +44,14 @@ class ReconciliationLoader:
             if row[0] is None:
                 continue
 
+            #for mapping between excel and figure result
+            metric_mapping = FIGURE_RESULT_MAPPING[str(row[1]).strip()]
+
+            print(f"mapping metric : {metric_mapping} | {str(row[1]).strip()}")
+
             figures.append(
                 ExpectedFigure(
+                    metric_mapping=metric_mapping,
                     section=str(row[0]).strip(),
                     metric=str(row[1]).strip(),
                     value=self._parse_percentage(row[2]),

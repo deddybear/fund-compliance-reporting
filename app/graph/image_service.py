@@ -24,32 +24,24 @@ class GraphImageService:
 
     def generate(
         self,
-        figure: FigureResult,
+        metric_id: str,
+        title: str,
+        output_path: Path,
     ) -> Path | None:
-
+    
         graph = self._query.get_graph_path(
-            figure.figure,
+            metric_id,
         )
-
+    
         if graph is None:
             return None
-
+    
         render_data = self._builder.build(
-            title=figure.figure,
+            title=title,
             graph=graph,
         )
-
-        output = Path(
-            "storage/graphs"
-        ) / (
-            figure.figure.replace(
-                " ",
-                "_",
-            )
-            + ".png"
-        )
-
+    
         return self._renderer.render(
             render_data,
-            output,
+            output_path,
         )

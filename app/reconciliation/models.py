@@ -8,7 +8,7 @@ class ExpectedFigure:
     """
     Expected figure loaded from the answer key.
     """
-
+    metric_mapping: str
     section: str
     metric: str
     value: Decimal

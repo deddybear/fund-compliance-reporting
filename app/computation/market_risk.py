@@ -72,6 +72,8 @@ class MarketRiskCalculator(BaseCalculator):
         )
 
         return self.build_result(
+            graph_path=None,
+            metric_id="duration",
             section="Market Risk",
             figure="Portfolio Modified Duration",
             value=duration,
@@ -108,6 +110,8 @@ class MarketRiskCalculator(BaseCalculator):
         )
 
         return self.build_result(
+            graph_path=None,
+            metric_id="dv01",
             section="Market Risk",
             figure="Portfolio DV01",
             value=dv01,

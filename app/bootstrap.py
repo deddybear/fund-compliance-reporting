@@ -9,7 +9,7 @@ from app.computation.liquidity import LiquidityCalculator
 from app.computation.market_risk import MarketRiskCalculator
 from app.configuration.loader import ConfigurationLoader
 from app.configuration.settings import load_settings
-# from app.graph.cypher_runner import CypherRunner
+from app.graph.cypher_runner import CypherRunner
 from app.graph.graph_builder import GraphBuilder
 from app.graph.networkx_renderer import NetworkXRenderer
 from app.graph.query_service import GraphQueryService
@@ -43,7 +43,7 @@ class Bootstrap:
     Build and wire all application dependencies.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, args: str) -> None:
 
         #
         # Settings
@@ -60,9 +60,13 @@ class Bootstrap:
         self.databaseNeo4jDatabase.connect()
         self.databaseNeo4jDatabase.verify()
 
-        # self.cypher_runner = CypherRunner(
-        #     driver=self.databaseNeo4jDatabase.get_driver(),
-        # )
+        self.cypher_runner = CypherRunner(
+            driver=self.databaseNeo4jDatabase.get_driver(),
+        )
+
+        self.cypher_runner.prune()
+        
+        self.cypher_runner.initialize(Path("schema/graphs"))
 
         self.graph_loader = GraphLoader(
             driver=self.databaseNeo4jDatabase.get_driver(),
@@ -94,7 +98,7 @@ class Bootstrap:
         #
         self.audit_database = AuditDatabase(
             database_path=Path(
-                "storage/audit/audit.db"
+                "storage/db/audit.db"
             ),
         )
 
@@ -193,6 +197,8 @@ class Bootstrap:
 
         self.utilization_calculator = UtilizationCalculator()
         
+        self.graph_loader.load(Path(f"configs/{str(args)}.yaml"))
+
         self.report_writer = ReportWriter(
             utilization=self.utilization_calculator,
             graph_image=self.graph_image_service

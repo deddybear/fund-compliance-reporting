@@ -93,6 +93,7 @@ class Pipeline:
             },
         )
 
+
         reconciliation = (
             self._bootstrap.reconciliation_engine.reconcile(
                 answer_key=answer_key_path,
@@ -121,6 +122,7 @@ class Pipeline:
                 figures=computation.figures,
             )
         )
+
         #
         # AI Narrative
         #
@@ -152,6 +154,8 @@ class Pipeline:
         #         ),
         #     )
         # )
+
+
         report_path = (
             self._bootstrap.report_writer.pdf(
                 fund_name=configuration["profile"]["description"],

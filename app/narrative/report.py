@@ -10,6 +10,7 @@ from app.narrative.pdf.cover import CoverBuilder
 from app.narrative.pdf.tables import TablesBuilder
 from app.narrative.pdf.narrative import NarrativeBuilder
 from app.narrative.pdf.footer import FooterBuilder
+from app.narrative.pdf.graph import GraphsBuilder
 from app.narrative.markdown.builder import write_markdown
 from app.narrative.pdf.utilization import UtilizationCalculator
 from app.graph.image_service import GraphImageService
@@ -37,6 +38,10 @@ class ReportWriter:
         self.tables = TablesBuilder(
             self.styles,
             self._utilization,
+        )
+
+        self.graphs = GraphsBuilder(
+            self.styles,
         )
 
         self.narrative = NarrativeBuilder(
@@ -105,6 +110,14 @@ class ReportWriter:
         story: list = []
 
         #
+        # Generate graph images
+        #
+        self._generate_graph_images(
+            computation,
+        )
+
+
+        #
         # Cover
         #
         self.cover.build(
@@ -117,6 +130,14 @@ class ReportWriter:
         # Computed Figures
         #
         self.tables.build_computed_figures(
+            story=story,
+            computation=computation,
+        )
+
+        #
+        # Graph
+        #
+        self.graphs.build(
             story=story,
             computation=computation,
         )
@@ -147,4 +168,46 @@ class ReportWriter:
         )
 
         return output_path
+    
+    def _generate_graph_images(
+        self,
+        computation: ComputationResult,
+    ) -> None:
+        """
+        Generate graph image for every computed figure.
+        """
+
+        output_directory = Path(
+            "storage/graphs"
+        )
+
+        output_directory.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        for figure in computation.figures:
+
+            if figure.graph_path is None:
+                continue
+
+            try:
+
+                self._graph_image.generate(
+                    metric_id=figure.metric_id,
+                    title=figure.figure,
+                    output_path=output_directory
+                    / f"{figure.metric_id}.png",
+                )
+
+            except Exception as exc:
+
+                #
+                # Never fail report generation because
+                # graph rendering failed.
+                #
+                print(
+                    f"[GRAPH] Failed to render "
+                    f"{figure.figure}: {exc}"
+                )
 
