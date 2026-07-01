@@ -92,64 +92,35 @@ FUND-COMPLIANCE-REPORTING
     Project documentation.
 ```
 
-### PROFILE
+---
 
-The `PROFILE` environment variable specifies which compliance methodology the engine will use during execution.
-
-Each profile corresponds to a YAML configuration file located in the `configs/` directory. These configuration files define the complete compliance methodology, including:
-
-- Asset classification rules
-- Compliance limits and thresholds
-- Aggregation methods
-- Evaluation logic
-- Reporting options
-- Traceability requirements
-- Reconciliation settings
-
-For example:
-
-```env
-PROFILE=firm_a
-```
-
-will load:
+# Workflow
 
 ```
-configs/firm_a.yaml
+                     Fund Guideline PDF
+                            │
+                            ▼
+                  Knowledge Graph (Neo4j)
+                            ▲
+                            │
+        Cypher Schema Initialization Scripts
+                            │
+                            ▼
+                    Portfolio Holdings CSV
+                            │
+                            ▼
+              Deterministic Computation Engine
+                            │
+                            ▼
+         Traceability + Reconciliation Engine
+                            │
+                            ▼
+              PDF Compliance Report Generation
 ```
-
-Similarly,
-
-```env
-PROFILE=firm_b
-```
-
-will load:
-
-```
-configs/firm_b.yaml
-```
-
-To use a different methodology, simply create a new configuration file (for example, `firm_c.yaml`) under the `configs/` directory and update the `PROFILE` environment variable accordingly.
-
-```env
-PROFILE=firm_c
-```
-
-No source code changes are required when switching between supported compliance methodologies.
-
-# Using Docker
-
-## Prerequisites
-
-Before running the application, ensure the following software is installed:
-
-- Docker 24+
-- Docker Compose v2+
 
 ---
 
-## 1. Configure Environment Variables
+# Configure Environment
 
 Copy the example environment file.
 
@@ -157,92 +128,95 @@ Copy the example environment file.
 cp .env.example .env
 ```
 
-Edit the `.env` file if necessary.
+Edit the `.env` file and configure the required environment variables.
 
 Example:
 
 ```env
-PROFILE=firm_a
-NEO4J_URI=bolt://neo4j:7687
+NEO4J_URI=bolt://localhost:7687
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=password
-OPENAI_API_KEY=your_key_api
-OPENAI_API_MODEL=gpt-5.4-mini
 
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_API_MODEL=gpt-5.4-mini
 ```
+
+| Variable | Description |
+|----------|-------------|
+| `NEO4J_URI` | URI of the Neo4j database. |
+| `NEO4J_USERNAME` | Neo4j username. |
+| `NEO4J_PASSWORD` | Neo4j password. |
+| `OPENAI_API_KEY` | OpenAI API key used for narrative generation. |
+| `OPENAI_API_MODEL` | OpenAI model used by the application. |
+
+> **Note**
+>
+> The compliance methodology is **not** configured through environment variables. It is selected using the `--profile` command-line argument when starting the application.
 
 ---
 
-## 2. Start the Application
+# Start the Application
 
-```bash
-docker compose up
-```
+## 1. Start Neo4j
 
-or run in detached mode
+Start the Neo4j container.
 
 ```bash
 docker compose up -d
 ```
 
----
-
-## 4. Input Files
-
-The application expects the following input files:
-
-```
-configs/
-    firm_a.yaml
-    firm_b.yaml
-
-data/
-    sample_holdings.csv
-```
-
-The compliance profile is selected using the `PROFILE` environment variable.
-
-Example:
-
-```env
-PROFILE=firm_a
-```
-
-or
-
-```env
-PROFILE=firm_b
-```
-
----
-
-## 5. Generated Output
-
-After execution, generated artifacts can be found under:
-
-```
-storage/
-
-├── reports/
-│   Generated compliance PDF reports
-│
-├── graphs/
-│   Knowledge graph visualizations
-│
-└── db/
-    Local database artifacts (if applicable)
-```
-
----
-
-## 6. Stop the Application
+## 2. Install Dependencies
 
 ```bash
-docker compose down
+uv sync
 ```
 
-To also remove volumes:
+---
+
+## 3. Run the Application
+
+Run the application by specifying the compliance profile.
+
+### Firm A
 
 ```bash
-docker compose down -v
+uv run python main.py --profile firm_a
+```
+
+### Firm B
+
+```bash
+uv run python main.py --profile firm_b
+```
+
+The `--profile` argument determines which compliance methodology is loaded from the `configs/` directory.
+
+For example:
+
+```bash
+uv run python main.py --profile firm_a
+```
+
+loads:
+
+```
+configs/firm_a.yaml
+```
+
+while:
+
+```bash
+uv run python main.py --profile firm_b
+```
+
+loads:
+
+```
+configs/firm_b.yaml
+```
+
+To add a new compliance methodology, create a new configuration file (for example, `firm_c.yaml`) under the `configs/` directory and run:
+
+```bash
+uv run python main.py --profile firm_c
 ```
